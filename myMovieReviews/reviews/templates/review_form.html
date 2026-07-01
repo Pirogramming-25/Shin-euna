@@ -1,0 +1,70 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if review %}리뷰 수정하기{% else %}새 리뷰 작성하기{% endif %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>{% if review %}리뷰 수정하기{% else %}새 리뷰 작성하기{% endif %}</h1>
+    <a href="{% url 'review_list' %}">목록으로 돌아가기</a>
+    <hr>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <p>
+            <label for="title">영화 제목:</label><br>
+            <input type="text" id="title" name="title" value="{{ review.title }}" required>
+        </p>
+
+        <p>
+            <label for="opening_year">개봉 년도 (숫자만):</label><br>
+            <input type="number" id="opening_year" name="opening_year" value="{{ review.opening_year }}" required>
+        </p>
+
+        <p>
+            <label for="director">감독:</label><br>
+            <input type="text" id="director" name="director" value="{{ review.director }}" required>
+        </p>
+
+        <p>
+            <label for="actor">주연 배우:</label><br>
+            <input type="text" id="actor" name="actor" value="{{ review.actor }}" required>
+        </p>
+
+        <p>
+            <label for="genre">장르:</label><br>
+            <select id="genre" name="genre" required>
+                <option value="action" {% if review.genre == 'action' %}selected{% endif %}>액션</option>
+                <option value="romance" {% if review.genre == 'romance' %}selected{% endif %}>로맨스/멜로</option>
+                <option value="comedy" {% if review.genre == 'comedy' %}selected{% endif %}>코미디</option>
+                <option value="thriller" {% if review.genre == 'thriller' %}selected{% endif %}>스릴러/공포</option>
+                <option value="sf" {% if review.genre == 'sf' %}selected{% endif %}>SF/판타지</option>
+                <option value="drama" {% if review.genre == 'drama' %}selected{% endif %}>드라마</option>
+                <option value="animation" {% if review.genre == 'animation' %}selected{% endif %}>애니메이션</option>
+            </select>
+        </p>
+
+        <p>
+            <label for="star_rating">별점 (예: 4.5):</label><br>
+            <input type="number" id="star_rating" name="star_rating" step="0.1" min="0" max="5" value="{{ review.star_rating }}" required>
+        </p>
+
+        <p>
+            <label for="running_time">러닝타임 (분 단위 숫자):</label><br>
+            <input type="number" id="running_time" name="running_time" value="{{ review.running_time }}" required>
+        </p>
+
+
+        <p>
+            <label for="content">리뷰 내용:</label><br>
+            <textarea id="content" name="content" rows="10" cols="50" required>{% if review %}{{ review.content }}{% endif %}</textarea>
+        </p>
+
+        <button type="submit">저장하기</button>
+    </form>
+</body>
+</html>
