@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>나만의 영화 기록 사이트</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>My Movie Reviews</h1>
+    
+    <a href="{% url 'review_create' %}">새 리뷰 작성하기</a>
+    <hr>
+
+    <h2>리뷰 목록</h2>
+    <div class="sorting-links" style="margin-bottom: 20px;">
+        <strong>정렬 기준:</strong>
+        <a href="?sort=created_at" {% if current_sort == 'created_at' %}style="font-weight: bold; color: black;"{% endif %}>최신순</a> | 
+        <a href="?sort=title" {% if current_sort == 'title' %}style="font-weight: bold; color: black;"{% endif %}>제목순</a> | 
+        <a href="?sort=star" {% if current_sort == 'star' %}style="font-weight: bold; color: black;"{% endif %}>별점 높은순</a> | 
+        <a href="?sort=time" {% if current_sort == 'time' %}style="font-weight: bold; color: black;"{% endif %}>러닝타임 긴순</a>
+    </div>
+    {% if reviews %}
+        <ul>
+            {% for review in reviews %}
+                <li>
+                    <h3>
+                        <a href="{% url 'review_detail' review.pk %}">{{ review.title }}</a>
+                    </h3>
+                    <p>개봉 년도: {{ review.opening_year }}년</p>
+                    <p>장르: {{ review.get_genre_display }}</p>
+                    <p>별점: {{ review.star_rating }} / 5.0</p>
+                    <hr>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>아직 작성된 영화 리뷰가 없습니다. 첫 리뷰를 작성해 보세요!</p>
+    {% endif %}
+</body>
+</html>

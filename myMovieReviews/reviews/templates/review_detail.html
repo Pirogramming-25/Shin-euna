@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ review.title }} - 리뷰 상세보기</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1><a href="{% url 'review_list' %}" style="text-decoration: none; color: black;">my Movie reviews</a></h1>
+    <a href="{% url 'review_create' %}">새 리뷰 작성하기</a>
+    <hr>
+
+    <h2>{{ review.title }}</h2>
+    <p><strong>감독:</strong> {{ review.director }}</p>
+    <p><strong>주연:</strong> {{ review.actor }}</p>
+    <p><strong>장르:</strong> {{ review.get_genre_display }}</p>
+    <p><strong>별점:</strong> {{ review.star_rating }} / 5.0</p>
+    <p><strong>러닝타임:</strong> {{ review.get_running_time_to_hours }}</p>
+    
+    <fieldset>
+        <legend>리뷰 내용</legend>
+        <p>{{ review.content|linebreaksbr }}</p>
+    </fieldset>
+
+    <br>
+    <a href="{% url 'review_update' review.pk %}">수정하기</a> | 
+
+    <form action="{% url 'review_delete' review.pk %}" method="POST" style="display: inline;" onsubmit="return confirm('정말 이 리뷰를 삭제하시겠습니까?');">
+        {% csrf_token %}
+        <button type="submit" style="background: none; border: none; color: red; text-decoration: underline; cursor: pointer; font-size: 16px; padding: 0;">삭제하기</button>
+    </form>
+</body>
+</html>
