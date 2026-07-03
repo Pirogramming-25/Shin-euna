@@ -1,0 +1,37 @@
+{% extends 'ideas/base.html' %}
+{% block content %}
+<div class="card shadow-sm p-4" style="max-width: 800px; margin: 0 auto;">
+    <h2 class="fw-bold mb-2">{{ devtool.name }}</h2>
+    <p class="text-muted">종류: <span class="badge bg-info text-dark">{{ devtool.kind }}</span></p>
+
+    <div class="mb-4">
+        <h5>소개 및 설명</h5>
+        <p class="border p-3 rounded bg-light" style="white-space: pre-wrap;">{{ devtool.content }}</p>
+    </div>
+
+    <div class="mb-4">
+        <h5>이 개발툴을 사용하는 아이디어 목록</h5>
+        <div class="list-group">
+            {% for idea in related_ideas %}
+                <a href="{% url 'ideas:idea_detail' idea.pk %}" class="list-group-item list-group-item-action">
+                    {{ idea.title }}
+                </a>
+            {% empty %}
+                <p class="text-muted px-2">이 개발툴을 사용해 등록된 아이디어가 아직 없습니다.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between border-top pt-3 mt-4">
+        <div>
+            <a href="{% url 'ideas:devtool_list' %}" class="btn btn-secondary">목록</a>
+            <a href="{% url 'ideas:devtool_update' devtool.pk %}" class="btn btn-warning">수정</a>
+        </div>
+
+        <form action="{% url 'ideas:devtool_delete' devtool.pk %}" method="POST" onsubmit="return confirm('정말 삭제하시겠습니까? 개발툴을 삭제해도 기존 아이디어는 유지됩니다.');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">삭제</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

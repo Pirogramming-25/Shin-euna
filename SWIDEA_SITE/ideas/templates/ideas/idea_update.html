@@ -1,0 +1,14 @@
+{% extends 'ideas/base.html' %}
+{% block content %}
+<div class="card p-4 shadow-sm" style="max-width: 600px; margin: 0 auto;">
+    <h2 class="mb-4">아이디어 수정</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-primary flex-grow-1">수정 완료</button>
+            <a href="{% url 'ideas:idea_detail' idea.pk %}" class="btn btn-outline-secondary">취소</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

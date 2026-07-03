@@ -1,0 +1,77 @@
+{% extends 'ideas/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <h2>아이디어 관리 목록</h2>
+    
+    <div class="btn-group" role="group" aria-label="Sort Options">
+        <a href="{% url 'ideas:main' %}?sort=id_desc" class="btn btn-sm {% if current_sort == 'id_desc' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+            최신순
+        </a>
+        <a href="{% url 'ideas:main' %}?sort=id_asc" class="btn btn-sm {% if current_sort == 'id_asc' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+            등록순
+        </a>
+        <a href="{% url 'ideas:main' %}?sort=name" class="btn btn-sm {% if current_sort == 'name' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+            이름순
+        </a>
+        <a href="{% url 'ideas:main' %}?sort=star" class="btn btn-sm {% if current_sort == 'star' %}btn-dark{% else %}btn-outline-dark{% endif %}">
+            찜하기순
+        </a>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for idea in ideas %}
+        <div class="col">
+            <div class="card h-100 shadow-sm position-relative">
+
+                <div class="position-absolute top-0 end-0 p-2" style="z-index: 10;">
+                    <span style="font-size: 1.5rem; color: gray; cursor: pointer;">☆</span>
+                </div>
+
+                {% if idea.image %}
+                    <img src="{{ idea.image.url }}" class="card-img-top" alt="{{ idea.title }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-light text-center d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <span class="text-muted">이미지 없음</span>
+                    </div>
+                {% endif %}
+
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'ideas:idea_detail' idea.pk %}" class="text-decoration-none text-dark fw-bold">
+                            {{ idea.title }}
+                        </a>
+                    </h5>
+                    <p class="card-text text-truncate">{{ idea.content }}</p>
+
+                    <div class="mb-2">
+                        <span class="badge bg-secondary">
+                            {% if idea.devtool %}{{ idea.devtool.name }}{% else %}선택 안함{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-between mt-3">
+                        <span class="text-muted">관심도: <strong>{{ idea.interest }}</strong></span>
+                        <div class="d-flex gap-1">
+                            <form method="post" action="{% url 'ideas:interest_update' idea.pk %}?sort={{ current_sort }}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="plus">
+                                <button type="submit" class="btn btn-sm btn-outline-success">+</button>
+                            </form>
+                            <form method="post" action="{% url 'ideas:interest_update' idea.pk %}?sort={{ current_sort }}">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="minus">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">-</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12 text-center my-5">
+            <p class="text-muted fs-5">등록된 아이디어가 없습니다. 첫 아이디어를 등록해 보세요!</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
