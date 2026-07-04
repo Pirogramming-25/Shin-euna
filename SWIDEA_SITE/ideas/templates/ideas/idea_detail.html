@@ -1,0 +1,44 @@
+{% extends 'ideas/base.html' %}
+{% block content %}
+<div class="card shadow-sm p-4" style="max-width: 800px; margin: 0 auto;">
+    <h2 class="fw-bold mb-3">{{ idea.title }}</h2>
+
+    <p class="text-muted">등록일: {{ idea.created_at|date:"Y-m-d H:i" }} | 관심도: <strong>{{ idea.interest }}</strong></p>
+
+    <div class="mb-4 text-center">
+        {% if idea.image %}
+            <img src="{{ idea.image.url }}" alt="{{ idea.title }}" class="img-fluid rounded" style="max-height: 400px; object-fit: contain;">
+        {% else %}
+            <div class="bg-light text-center py-5 rounded text-muted">등록된 이미지가 없습니다.</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-4">
+        <h5>아이디어 상세 내용</h5>
+        <p class="border p-3 rounded bg-light" style="white-space: pre-wrap;">{{ idea.content }}</p>
+    </div>
+
+    <div class="mb-4">
+        <h5>사용 개발툴</h5>
+        {% if idea.devtool %}
+            <a href="{% url 'ideas:devtool_detail' idea.devtool.pk %}" class="btn btn-sm btn-outline-secondary">
+                {{ idea.devtool.name }} ({{ idea.devtool.kind }})
+            </a>
+        {% else %}
+            <span class="text-muted">선택된 개발툴이 없습니다.</span>
+        {% endif %}
+    </div>
+
+    <div class="d-flex justify-content-between border-top pt-3 mt-4">
+        <div>
+            <a href="{% url 'ideas:main' %}" class="btn btn-secondary">목록</a>
+            <a href="{% url 'ideas:idea_update' idea.pk %}" class="btn btn-warning">수정</a>
+        </div>
+
+        <form action="{% url 'ideas:idea_delete' idea.pk %}" method="POST" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">삭제</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'ideas/base.html' %}
+{% block content %}
+<div class="card p-4 shadow-sm" style="max-width: 600px; margin: 0 auto;">
+    <h2 class="mb-4">개발툴 등록</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }} <button type="submit" class="btn btn-dark w-100 mt-3">등록 완료</button>
+    </form>
+</div>
+{% endblock %}
