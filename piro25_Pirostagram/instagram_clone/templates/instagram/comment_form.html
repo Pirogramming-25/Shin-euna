@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>댓글 수정</title>
+    <style>
+        body { font-family: sans-serif; background: #fafafa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: white; border: 1px solid #dbdbdb; padding: 30px; border-radius: 8px; width: 350px; text-align: center; }
+        textarea { width: 100%; border: 1px solid #dbdbdb; border-radius: 4px; padding: 10px; resize: none; box-sizing: border-box; margin-bottom: 15px; }
+        button { background: #0095f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h3>댓글 수정하기</h3>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <textarea name="content" rows="3" required>{{ comment.content }}</textarea>
+            <button type="submit">수정 완료</button>
+        </form>
+        <a href="{% url 'feed' %}" style="display:block; margin-top:15px; color:#8e8e8e; font-size:14px; text-decoration:none;">취소</a>
+    </div>
+</body>
+</html>
