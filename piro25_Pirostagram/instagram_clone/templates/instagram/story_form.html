@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>새 스토리 올리기</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 50px auto; padding: 20px; border: 1px solid #dbdbdb; border-radius: 4px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .submit-btn { width: 100%; padding: 10px; background: #ed4956; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>스토리 업로드</h2>
+    <p style="font-size: 13px; color: #8e8e8e;">여러 장의 사진을 동시에 선택해서 올릴 수 있습니다.</p>
+    
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="images">이미지 여러 장 선택 (Shift 나 Ctrl 키 활용)</label>
+            <input type="file" id="images" name="images" class="form-control" multiple required>
+        </div>
+        <button type="submit" class="submit-btn">스토리 공유</button>
+    </form>
+    <p style="text-align: center; margin-top: 15px;"><a href="{% url 'feed' %}" style="color: #8e8e8e;">취소</a></p>
+</body>
+</html>

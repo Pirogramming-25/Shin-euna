@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>유저 검색</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .search-form { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-input { flex-grow: 1; padding: 10px; border: 1px solid #dbdbdb; border-radius: 4px; }
+        .search-btn { padding: 10px 20px; background: #0095f6; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .user-item { padding: 15px; border-bottom: 1px solid #efefef; display: flex; justify-content: space-between; align-items: center; }
+        .user-link { text-decoration: none; color: black; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <p><a href="{% url 'feed' %}">← 피드로 돌아가기</a></p>
+    <h2>유저 검색</h2>
+    
+    <form method="GET" action="{% url 'user_search' %}" class="search-form">
+        <input type="text" name="q" class="search-input" value="{{ query }}" placeholder="계정 아이디 검색...">
+        <button type="submit" class="search-btn">검색</button>
+    </form>
+
+    <div>
+        {% for user in users %}
+        <div class="user-item">
+            <a href="{% url 'user_profile' user.username %}" class="user-link">@{{ user.username }}</a>
+            <span style="font-size: 13px; color: #8e8e8e;">클릭하여 프로필 열람</span>
+        </div>
+        {% empty %}
+            {% if query %}
+            <p style="color: #8e8e8e; text-align: center;">검색 결과가 없습니다.</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+</body>
+</html>
