@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@{{ profile_user.username }}님의 프로필</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #FAFAFA; color: #262626; display: flex; }
+        a { text-decoration: none; color: inherit; }
+
+        .sidebar { width: 245px; height: 100vh; border-right: 1px solid #DBDBDB; padding: 40px 24px; position: fixed; left: 0; top: 0; background: #FFF; z-index: 100; }
+        .logo { font-size: 28px; font-weight: bold; font-family: 'Georgia', serif; margin-bottom: 40px; padding-left: 12px; }
+        .menu-list { list-style: none; }
+        .menu-item { display: flex; align-items: center; gap: 16px; padding: 16px 12px; border-radius: 8px; font-size: 16px; cursor: pointer; transition: background 0.2s; margin-bottom: 4px; }
+        .menu-item:hover { background-color: #FAFAFA; font-weight: bold; }
+
+        .main-container { margin-left: 245px; width: calc(100% - 245px); display: flex; justify-content: center; padding: 50px 20px; }
+        .content-wrapper { width: 935px;}
+
+        .profile-header { display: flex; align-items: center; margin-bottom: 44px; padding: 0 40px; gap: 100px; }
+        
+        .avatar-container { width: 150px; height: 150px; position: relative; }
+        .profile-avatar { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; background: #EFEFEF; display: block; }
+        
+        .user-info-area { flex-grow: 1; display: flex; flex-direction: column; gap: 20px; }
+        .username-row { display: flex; align-items: center; gap: 20px; }
+        .username-text { font-size: 28px; font-weight: 300; }
+        
+        .follow-btn { padding: 6px 16px; border: none; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .btn-follow { background-color: #0095F6; color: white; }
+        .btn-unfollow { background-color: #EFEFEF; color: black; }
+        .my-profile-tag { font-size: 14px; color: #8E8E8E; background: #EFEFEF; padding: 6px 16px; border-radius: 4px; }
+
+        .stats-row { display: flex; gap: 40px; list-style: none; font-size: 16px; }
+        .stats-row li { color: #262626; }
+        .stats-num { font-weight: 600; }
+        
+        .bio-row { font-size: 14px; font-weight: 600; line-height: 1.4; }
+
+        .posts-divider { border-top: 1px solid #DBDBDB; margin-bottom: 0; }
+        .grid-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; padding-top: 28px; }
+        
+        .grid-item { position: relative; width: 100%; padding-top: 100%; cursor: pointer; background: #EFEFEF; overflow: hidden; }
+        .grid-item img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.2s ease; }
+        .grid-item:hover img { transform: scale(1.02); }
+
+        .post-icon-badge { position: absolute; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.5); color: white; border-radius: 4px; padding: 4px 6px; font-size: 10px; font-weight: bold; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">Pirostagram</div>
+        <ul class="menu-list">
+            <li class="menu-item" onclick="location.href='{% url "feed" %}'"><i>🏠</i> 홈</li>
+            <li class="menu-item"><i>🔍</i> 게시글 검색</li>
+            <li class="menu-item" onclick="location.href='{% url "user_search" %}'"><i>👥</i> 유저 검색</li>
+            <li class="menu-item" onclick="location.href='{% url "post_create" %}'"><i>➕</i> 게시물 만들기</li>
+            <li class="menu-item" onclick="location.href='{% url "user_profile" request.user.username %}'"><i>👤</i> 프로필</li>
+        </ul>
+    </div>
+
+    <div class="main-container">
+        <div class="content-wrapper">
+            
+            <div class="profile-header">
+                <div class="avatar-container">
+                    {% if posts.exists %}
+                        <img src="{{ posts.first.image.url }}" class="profile-avatar" alt="profile avatar">
+                    {% else %}
+                        <div class="profile-avatar" style="background: linear-gradient(45deg, #ddd, #bbb);"></div>
+                    {% endif %}
+                </div>
+                
+                <div class="user-info-area">
+                    <div class="username-row">
+                        <span class="username-text">{{ profile_user.username }}</span>
+                        
+                        {% if profile_user != request.user %}
+                            <a href="{% url 'user_follow' profile_user.username %}">
+                                {% if is_following %}
+                                    <button class="follow-btn btn-unfollow">언팔로우</button>
+                                {% else %}
+                                    <button class="follow-btn btn-follow">팔로우</button>
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            <span class="my-profile-tag">내 프로필</span>
+                        {% endif %}
+                        <span style="cursor:pointer; color:#8E8E8E; font-weight:bold;">•••</span>
+                    </div>
+                    
+                    <ul class="stats-row">
+                        <li>게시물 <span class="stats-num">{{ posts.count }}</span></li>
+                        <li>팔로워 <span class="stats-num">4M</span></li>
+                        <li>팔로잉 <span class="stats-num">1,250</span></li>
+                    </ul>
+                    
+                    <div class="bio-row">
+                        <p>안녕하세요 👋</p>
+                        <p style="font-weight: normal; color: #8E8E8E; margin-top: 4px;">@{{ profile_user.username }}의 공간입니다.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="posts-divider"></div>
+
+            <div class="grid-container">
+                {% for post in posts %}
+                <div class="grid-item" onclick="location.href='{% url "feed" %}#post-{{ post.id }}'">
+                    <img src="{{ post.image.url }}" alt="grid post image">
+                    {% if forloop.counter|divisibleby:3 %}
+                        <div class="post-icon-badge">📄</div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div style="grid-column: span 3; text-align: center; color: #8E8E8E; padding: 80px 0; font-size: 14px;">
+                    작성된 게시글이 없습니다.
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
