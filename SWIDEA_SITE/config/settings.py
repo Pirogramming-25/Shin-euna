@@ -64,11 +64,17 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": str(BASE_DIR / "db.sqlite3"),
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.environ.get("MYSQL_DATABASE", "swidea_db"),
+        "USER": os.environ.get("MYSQL_USER", "swidea_user"),
+        "PASSWORD": os.environ.get("MYSQL_PASSWORD", "swidea_password"),
+        "HOST": os.environ.get("MYSQL_HOST", "swidea-db"),
+        "PORT": os.environ.get("MYSQL_PORT", "3306"),
+        "OPTIONS": {
+            "charset": "utf8mb4",
+        },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
