@@ -1,0 +1,14 @@
+{% extends 'ideas/base.html' %}
+{% block content %}
+<h2>개발툴 관리 페이지</h2>
+<div class="list-group mt-4">
+    {% for devtool in devtools %}
+        <a href="{% url 'ideas:devtool_detail' devtool.pk %}" class="list-group-item list-group-item-action">
+            <h5 class="mb-1">{{ devtool.name }}</h5>
+            <small class="text-muted">종류: {{ devtool.kind }}</small>
+        </a>
+    {% empty %}
+        <p class="text-muted">등록된 개발툴이 없습니다. 먼저 개발툴을 등록해 주세요!</p>
+    {% endfor %}
+</div>
+{% endblock %}
