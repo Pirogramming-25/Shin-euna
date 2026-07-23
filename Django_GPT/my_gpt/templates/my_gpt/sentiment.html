@@ -1,0 +1,57 @@
+{% extends "my_gpt/base.html" %}
+{% load static %}
+
+{% block title %}감정 분석 · Django GPT{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h1 class="card__title">😊 감정 분석</h1>
+    <p class="field__hint" style="margin-bottom:1rem;">영어 텍스트 1~1,000자를 입력하면 긍정/부정 감정과 신뢰도를 분석합니다. 로그인하지 않아도 사용할 수 있습니다.</p>
+    <div class="model-meta">
+        <p class="model-meta__row">사용 모델: <code>cardiffnlp/twitter-roberta-base-sentiment-latest</code></p>
+        <p class="model-meta__row">입력 언어: 영어</p>
+    </div>
+
+    <form id="sentiment-form" data-authenticated="{% if user.is_authenticated %}1{% else %}0{% endif %}">
+        {% csrf_token %}
+        <div class="field">
+            <label for="sentiment-text">분석할 텍스트</label>
+            <textarea id="sentiment-text" name="text" rows="5" maxlength="1000" placeholder="Type or paste English text here (1-1000 characters)..." required></textarea>
+            <div class="field__hint">
+                <span>영어 1~1,000자</span>
+                <span><span id="sentiment-char-count">0</span> / 1000</span>
+            </div>
+        </div>
+        <button type="submit" class="btn" id="sentiment-submit">분석하기</button>
+    </form>
+
+    <div id="sentiment-result" class="result-box is-hidden"></div>
+</section>
+
+<section class="card">
+    <h2 class="card__title">최근 기록 (최대 5개)</h2>
+
+    {% if user.is_authenticated %}
+        <ul class="history-list">
+            {% for item in history %}
+                <li>
+                    <span class="history-text">{{ item.input_text|truncatechars:60 }}</span>
+                    <span class="history-meta">{{ item.output_text }}</span>
+                </li>
+            {% empty %}
+                <li class="history-empty">아직 기록이 없습니다.</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <ul class="history-list" id="sentiment-history-anon">
+            <li class="history-empty">아직 기록이 없습니다.</li>
+        </ul>
+        <p class="field__hint" style="margin-top:0.5rem;">※ 비로그인 상태의 기록은 브라우저 메모리에만 저장되며, 새로고침 시 초기화됩니다.</p>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'my_gpt/js/common.js' %}"></script>
+<script src="{% static 'my_gpt/js/sentiment.js' %}"></script>
+{% endblock %}
