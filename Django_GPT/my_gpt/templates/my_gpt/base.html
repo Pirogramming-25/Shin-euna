@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Django GPT{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'my_gpt/css/style.css' %}">
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<header class="site-header">
+    <div class="site-header__inner">
+        <a class="site-brand" href="{% url 'my_gpt:sentiment' %}">Django GPT</a>
+
+        <nav class="site-nav">
+            <div class="site-nav__links">
+                <a class="site-nav__link {% if request.resolver_match.url_name == 'sentiment' %}is-active{% endif %}"
+                   href="{% url 'my_gpt:sentiment' %}">감정 분석</a>
+                <a class="site-nav__link {% if request.resolver_match.url_name == 'summarize' %}is-active{% endif %}"
+                   href="{% url 'my_gpt:summarize' %}">요약</a>
+                <a class="site-nav__link {% if request.resolver_match.url_name == 'moderate' %}is-active{% endif %}"
+                   href="{% url 'my_gpt:moderate' %}">유해성 검사</a>
+                <a class="site-nav__link {% if request.resolver_match.url_name == 'combo' %}is-active{% endif %}"
+                   href="{% url 'my_gpt:combo' %}">복합 분석</a>
+            </div>
+
+            <div class="site-nav__user">
+                {% if user.is_authenticated %}
+                    <span>{{ user.username }}님</span>
+                    <form class="site-nav__logout-form" method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="site-nav__logout-btn">로그아웃</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">로그인</a>
+                {% endif %}
+            </div>
+        </nav>
+    </div>
+</header>
+
+<main class="site-main">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    &copy; {% now "Y" %} Django GPT
+</footer>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>

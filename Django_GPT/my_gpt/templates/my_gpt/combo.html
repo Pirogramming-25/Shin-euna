@@ -1,0 +1,65 @@
+{% extends "my_gpt/base.html" %}
+{% load static %}
+
+{% block title %}복합 분석 · Django GPT{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h1 class="card__title">🧩 AI 고객 피드백 분석 리포트</h1>
+    <p class="field__hint" style="margin-bottom:1rem;">영어 고객 리뷰/피드백 200~5,000자를 입력하면 요약 → 감정 분석 → 유해 표현 분석을 순서대로 체이닝하여 실행합니다.</p>
+    <div class="model-meta">
+        <span class="model-meta__row">
+            <span class="model-meta__label">사용 모델</span>
+            <span class="model-meta__chain">
+                <span class="model-meta__group">
+                    <code>sshleifer/distilbart-cnn-6-6</code><span class="model-meta__tag">요약</span>
+                </span>
+                <span class="model-meta__arrow">→</span>
+                <span class="model-meta__group">
+                    <code>cardiffnlp/twitter-roberta-base-sentiment-latest</code><span class="model-meta__tag">감정</span>
+                </span>
+                <span class="model-meta__arrow">·</span>
+                <span class="model-meta__group">
+                    <code>unitary/toxic-bert</code><span class="model-meta__tag">유해 표현</span>
+                </span>
+            </span>
+        </span>
+    </div>
+    <p class="field__hint" style="margin-bottom:1rem;">※ 감정/유해 표현 분석은 요약문을 입력으로 사용합니다.</p>
+
+    <form id="combo-form">
+        {% csrf_token %}
+        <div class="field">
+            <label for="combo-text">분석할 텍스트</label>
+            <textarea id="combo-text" name="text" rows="8" maxlength="5000" placeholder="Type or paste English customer review/feedback here (200-5000 characters)..." required></textarea>
+            <div class="field__hint">
+                <span>영어 200~5,000자</span>
+                <span><span id="combo-char-count">0</span> / 5000</span>
+            </div>
+        </div>
+        <button type="submit" class="btn" id="combo-submit">분석하기</button>
+    </form>
+
+    <div id="combo-result" class="result-box is-hidden"></div>
+    <button type="button" class="btn" id="combo-regenerate" style="margin-top:1rem;display:none;">🔄 재생성</button>
+</section>
+
+<section class="card">
+    <h2 class="card__title">최근 기록 (최대 5개)</h2>
+    <ul class="history-list">
+        {% for item in history %}
+            <li>
+                <span class="history-text">{{ item.input_text|truncatechars:60 }}</span>
+                <span class="history-meta">{{ item.output_text|truncatechars:50 }}</span>
+            </li>
+        {% empty %}
+            <li class="history-empty">아직 기록이 없습니다.</li>
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'my_gpt/js/common.js' %}"></script>
+<script src="{% static 'my_gpt/js/combo.js' %}"></script>
+{% endblock %}
