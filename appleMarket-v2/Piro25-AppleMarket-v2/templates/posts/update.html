@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>post_update</title>
+{% endblock %}
+
+{% block content %}
+<div class="form-box">
+    <form action="{% url 'posts:update' post.pk %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary">수정 완료</button>
+    </form>
+    {% include 'posts/_nutrition_ocr.html' %}
+</div>
+{% endblock %}
