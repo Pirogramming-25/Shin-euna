@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<title>post_detail</title>
+{% endblock%}
+
+
+{% block content %}
+<div class="detail-box">
+    <h1 class="title">{{post.title}}</h1>
+    {% if post.photo %}
+    <img src="{{post.photo.url}}" alt="제품 이미지" />
+    {% else %}
+    <img src="{% static 'posts/image/no-image.jpg' %}" alt="대체 텍스트" />
+    {% endif %}
+
+    <div class="detail-meta">
+        <p>작성자: {{post.user}}</p>
+        <p>지역: {{post.region}}</p>
+        <p>가격: {{post.price}}</p>
+    </div>
+    <h2 class="detail-content">{{post.content}}</h2>
+
+    {% if post.calorie or post.carbohydrate or post.protein or post.fat %}
+    <div class="nutrition-box">
+        <h3>식품 영양 정보</h3>
+        <ul>
+            <li>칼로리: {{post.calorie|default:"-"}}kcal</li>
+            <li>탄수화물: {{post.carbohydrate|default:"-"}}g</li>
+            <li>단백질: {{post.protein|default:"-"}}g</li>
+            <li>지방: {{post.fat|default:"-"}}g</li>
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="detail-meta">
+        <p>작성일: {{post.created_at}}</p>
+        <p>수정일: {{post.updated_at}}</p>
+    </div>
+    <p class="related-post">이 작성자의 글</p>
+
+    <div class="detail-actions">
+        <a href="{% url 'posts:update' post.pk %}" class="btn btn-primary">수정하기</a>
+        <a href="{% url 'posts:delete' post.pk %}" class="btn btn-danger">삭제하기</a>
+    </div>
+</div>
+{% endblock content %}

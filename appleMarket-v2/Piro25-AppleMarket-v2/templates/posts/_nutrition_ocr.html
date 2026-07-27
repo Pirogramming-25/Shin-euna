@@ -1,0 +1,62 @@
+<script>
+(function () {
+    var nutritionInput = document.getElementById('id_nutrition_image');
+    if (!nutritionInput) return;
+
+    var fieldIds = ['id_calorie', 'id_carbohydrate', 'id_protein', 'id_fat'];
+
+    function getCsrfToken() {
+        var match = document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)');
+        return match ? decodeURIComponent(match[2]) : '';
+    }
+
+    nutritionInput.addEventListener('change', function () {
+        var file = nutritionInput.files[0];
+        if (!file) return;
+
+        var placeholders = {};
+        fieldIds.forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            placeholders[id] = el.placeholder;
+            el.value = '';
+            el.placeholder = '분석 중...';
+            el.disabled = true;
+        });
+
+        var formData = new FormData();
+        formData.append('nutrition_image', file);
+
+        fetch('{% url "posts:analyze_nutrition" %}', {
+            method: 'POST',
+            headers: { 'X-CSRFToken': getCsrfToken() },
+            body: formData,
+        })
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                fieldIds.forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (!el) return;
+                    el.disabled = false;
+                    el.placeholder = placeholders[id] || '';
+                    var key = id.replace('id_', '');
+                    if (data[key] !== undefined && data[key] !== null) {
+                        el.value = data[key];
+                    }
+                });
+                if (data.error) {
+                    alert('OCR 분석 실패: ' + data.error);
+                }
+            })
+            .catch(function () {
+                fieldIds.forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (!el) return;
+                    el.disabled = false;
+                    el.placeholder = placeholders[id] || '';
+                });
+                alert('OCR 분석 중 오류가 발생했습니다.');
+            });
+    });
+})();
+</script>
